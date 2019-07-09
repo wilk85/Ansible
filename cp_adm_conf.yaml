@@ -1,0 +1,22 @@
+---
+# ansible-playbook nazwa.yaml -u sebastian -K
+# pobiera plik admin.conf i kopiuje go do folder .kube/config
+- name: pobierz admin conf z mastera
+  hosts: '*'
+  vars:
+    user_hostname: your_hostname 
+  user: your user
+  become: true
+
+  tasks: 
+    - name: czy plik istnieje
+      file: 
+        path: /etc/kubernetes/admin.conf
+        state: file
+
+    - name: pobierz plik admin.conf
+      fetch:
+        src: /etc/kubernetes/admin.conf
+        # dest: /home/w/pobrane
+        dest: "/home/{{user_hostname}}/.kube/config"
+        flat: yes
