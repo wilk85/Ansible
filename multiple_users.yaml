@@ -1,0 +1,28 @@
+---
+
+- name: master1
+  hosts: '*'
+  user: sebastian
+  become: true
+
+  vars: 
+    users: # pass values for your users
+    - {username: "tomtom", password: "tomtom", groups: ["sudo", "root"] }
+    - {username: "kamak", password: "kamak", groups: ["sudo", "root"] }
+
+  tasks: 
+
+    - name: "tworzy uzytkownikow // creating multi users"
+      user: name={{ item.username }} password={{ item.password | password_hash('sha512') }} shell=/bin/bash createhome=yes groups={{ item.groups }}
+      with_items: '{{users}}'   
+
+    - name: "tworze katalog .ssh/ // creating .ssh/ dirs"
+      file:
+        path: "/home/{{item.username}}/.ssh/"
+        state: directory
+      with_items: '{{users}}'
+
+    - name: "tworze klucz ssh .pub // creating ssh key .pub - renaming it to authorized_keys"
+      shell: "ssh-keygen -q -t rsa -f /home/{{item.username}}/.ssh/id_rsa -C {{item.username}} -N '' "
+      shell: "cp /home/{{item.username}}/.ssh/id_rsa.pub /home/{{item.username}}/.ssh/authorized_keys "
+      with_items: '{{users}}'

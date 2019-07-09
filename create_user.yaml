@@ -5,11 +5,12 @@
   vars: 
     user: marian
     password: "marian"
+  user: sebastian
   become: true
 
   tasks: 
 
-    - name: "tworzy uzytkownika i dodaje do grupy // creating user and adding to groups"
+    - name: "tworzy uzytkownika i dodaje do grupy [vm_master1]"
       user:
         name: "{{ user }}"
         password: "{{ password | password_hash('sha512') }}"
@@ -17,28 +18,28 @@
         state: present
         groups: root, sudo
     
-    - name: "sprawdza czy istnieje katalog .ssh/ // check if .ssh/ dir exists"
+    - name: "sprawdza czy istnieje katalog .ssh/"
       stat: 
-        path: "/home/{{user}}/.ssh/"
+        path: /home/marian/.ssh/
       register: ssh
 
-    - name: "tworze katalog .ssh/ // creating .ssh/ dir if don't exist"
+    - name: "tworze katalog .ssh/"
       file:
-        path: "/home/{{user}}/.ssh/"
+        path: /home/marian/.ssh/
         state: directory
       when: ssh.stat.exists == false
 
-    - name: "sprawdza czy istnieje plik .pub // checking if .pub file exists"
+    - name: "sprawdza czy istnieje plik .pub"
       stat: 
-        path: "/home/{{user}}/rsa_key_{{user}}.pub"
+        path: /home/marian/rsa_key_marian.pub
       register: pub
 
-    - name: "tworze klucz ssh .pub // creating ssh key"
-      command: "ssh-keygen -q -t rsa -f /home/{{user}}/rsa_key_{{users}} -C {{ user }} -N '' "
+    - name: "tworze klucz ssh .pub"
+      command: ssh-keygen -q -t rsa -f /home/marian/rsa_key_marian -C "{{ user }}" -N ""
       when: pub.stat.exists == false
 
-    - name: "kopiuje zawartosc pliku .pub do pliku authorized_keys // copy .pub file from home, and changing it name to authorized_keys in .ssh directory"
-      shell: "cp /home/{{user}}/rsa_key_{{user}}.pub /home/{{user}}/.ssh/authorized_keys"
+    - name: "kopiuje zawartosc pliku .pub do pliku authorized_keys"
+      shell: "cp /home/marian/rsa_key_marian.pub /home/marian/.ssh/authorized_keys"
       
-    - name: "nadaje prawa plikom w home/ // gives permissions to home directory"
-      file: path="/home/{{user}}/"" owner="{{user}}" group="{{user}}" state=directory recurse=yes
+    - name: "nadaje prawa plikom w home/marian uzytkownikowi marian"
+      file: path=/home/marian/ owner=marian group=marian state=directory recurse=yes

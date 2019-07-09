@@ -3,11 +3,6 @@
 # pobiera plik admin.conf i kopiuje go do folder .kube/config
 - name: pobierz admin conf z mastera
   hosts: '*'
-  vars:
-    user_hostname: your_hostname 
-  user: your user
-  become: true
-
   tasks: 
     - name: czy plik istnieje
       file: 
@@ -18,5 +13,6 @@
       fetch:
         src: /etc/kubernetes/admin.conf
         # dest: /home/w/pobrane
-        dest: "/home/{{user_hostname}}/.kube/config"
+        dest: /home/w/.kube/config
         flat: yes
+      become: true
