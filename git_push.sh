@@ -1,5 +1,3 @@
-comment=$1
-
 git add .
-git commit -m '$comment'
+git commit -m "$*"
 git push -u origin master
