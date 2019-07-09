@@ -1,5 +1,5 @@
 # Ansible
-Ansible scripts - you have to provice hosts file by yourself
+Ansible scripts - you have to provide hosts file by yourself
 
 
 script: **cp_adm_conf**
