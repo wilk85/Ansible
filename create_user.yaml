@@ -20,26 +20,26 @@
     
     - name: "sprawdza czy istnieje katalog .ssh/"
       stat: 
-        path: /home/marian/.ssh/
+        path: "/home/{{user}}/.ssh/"
       register: ssh
 
     - name: "tworze katalog .ssh/"
       file:
-        path: /home/marian/.ssh/
+        path: "/home/{{user}}/.ssh/"
         state: directory
       when: ssh.stat.exists == false
 
     - name: "sprawdza czy istnieje plik .pub"
       stat: 
-        path: /home/marian/rsa_key_marian.pub
+        path: "/home/{{user}}/id_rsa.pub"
       register: pub
 
     - name: "tworze klucz ssh .pub"
-      command: ssh-keygen -q -t rsa -f /home/marian/rsa_key_marian -C "{{ user }}" -N ""
+      command: "ssh-keygen -q -t rsa -f /home/{{user}}/id_rsa.pub -C '{{user}}' -N '' "
       when: pub.stat.exists == false
 
     - name: "kopiuje zawartosc pliku .pub do pliku authorized_keys"
-      shell: "cp /home/marian/rsa_key_marian.pub /home/marian/.ssh/authorized_keys"
+      shell: "cp /home/{{user}}/id_rsa.pub /home/{{user}}/.ssh/authorized_keys"
       
     - name: "nadaje prawa plikom w home/marian uzytkownikowi marian"
-      file: path=/home/marian/ owner=marian group=marian state=directory recurse=yes
+      file: path=/home/{{user}}/ owner={{user}} group={{user}} state=directory recurse=yes
