@@ -2,7 +2,7 @@
 
 - name: "Kubectl on local machine"
   hosts: '*'
-  user: sebastian
+  user:
   become: true
 
   vars: 
